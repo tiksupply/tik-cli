@@ -58,7 +58,7 @@ use crate::{conf, Miner};
                 coins.push(coin.object_ref());
 
             }
-            let gas_budget = 10_000_000;
+            let gas_budget = 50_000_000;
             if gasbalance<(gas_budget as u64)
             {
                 eprintln!("-----------------------------------------------------------------------------------");
