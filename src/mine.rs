@@ -217,7 +217,7 @@ impl Miner {
                         vec![miner_o,epochs_o,current_epoch_arg,lockdays_arg,clock_o],
                     );
                     conf::remove_from_win_data(win_data[i]).await;
-                    gas_budget = gas_budget+ 100_000_000;
+                    gas_budget = gas_budget+ 12_000_000;
                 }
 
                 let pt = pt_builder.finish();

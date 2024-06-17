@@ -57,7 +57,7 @@ impl Miner {
 
                     let gas_price = self.sui_client.read_api().get_reference_gas_price().await?;
                     let tx_data = 
-                    TransactionData::new_programmable( self.address,vec![gas_coins.object_ref()],pt,50_000_000,gas_price);
+                    TransactionData::new_programmable( self.address,gas_coins,pt,50_000_000,gas_price);
 
                   
                     let  keystore = FileBasedKeystore::new(&sui_config_dir()?.join(SUI_KEYSTORE_FILENAME))?;

@@ -3,10 +3,10 @@ use sui_keys::{key_derive::generate_new_key, keypair_file::write_keypair_to_file
 use once_cell::sync::Lazy;
 use sui_json_rpc_types::{CheckpointId, SuiMoveStruct, SuiMoveValue, SuiParsedData};
 use sui_sdk::{
-    rpc_types::{SuiObjectData, SuiObjectDataFilter, SuiObjectDataOptions, SuiObjectResponseQuery},
+    rpc_types::{SuiObjectData, SuiObjectDataOptions},
     SuiClient,
 };
-use sui_types::{base_types::{ObjectID, SuiAddress}, crypto::{EncodeDecodeBase64, SignatureScheme, SuiKeyPair}, error::SuiError, gas_coin::GasCoin};
+use sui_types::{base_types::{ObjectID, SequenceNumber, SuiAddress}, crypto::{EncodeDecodeBase64, SignatureScheme, SuiKeyPair}, digests::ObjectDigest, error::SuiError};
 use tokio::sync::Mutex;
 
 use crate::Miner;
@@ -229,33 +229,23 @@ let decif64 = 10.0_f64.powf(decimals);
 pub async fn fetch_sorted_gas_coins(
     rpc_client: &SuiClient,
     sender: &SuiAddress,
-) -> anyhow::Result<SuiObjectData> {
+) -> anyhow::Result<Vec<(ObjectID, SequenceNumber, ObjectDigest)>> {
 
 
-        let response = rpc_client
-            .read_api()
-            .get_owned_objects(
-                sender.clone(),
-                Some(SuiObjectResponseQuery {
-                    filter: Some(SuiObjectDataFilter::MatchAll(vec![
-                        SuiObjectDataFilter::StructType(GasCoin::type_()),
-                    ])),
-                    options: Some(SuiObjectDataOptions::full_content()),
-                }),
-                None,
-                None,
-            )
-            .await?;
+        let coins = rpc_client
+        .coin_read_api()
+        .get_coins(  sender.to_owned(), None, None, None)
+        .await.unwrap();
+        let gascoin = coins.data;
+        let mut gasbalance=0;
+        let mut coins:Vec<(ObjectID, SequenceNumber, ObjectDigest)>=vec![];
+        for coin in gascoin.iter() {
+            gasbalance=gasbalance+coin.balance;
+            coins.push(coin.object_ref());
 
-        let coin = response
-        .data
-        .iter()
-        .find(|obj| obj.data.as_ref().unwrap().is_gas_coin())
-        .expect("\x1b[91m●\x1b[0m Error! Need some SUI in wallet for gas fee! ");
- 
-        let coin = coin.data.as_ref().unwrap();
+        }
 
-    Ok(coin.clone())
+    Ok(coins)
 }
 
 
