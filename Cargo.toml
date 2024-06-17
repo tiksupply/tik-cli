@@ -1,0 +1,35 @@
+[package]
+name = "tik"
+version = "1.0.1"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+chrono = "0.4.34"
+clap = { version = "4.4.12", features = ["derive"] }
+sui-sdk = { git = "https://github.com/mystenlabs/sui", package = "sui-sdk"}
+sui-keys =  { git = "https://github.com/mystenlabs/sui", package = "sui-keys"}
+sui-types =  { git = "https://github.com/mystenlabs/sui", package = "sui-types"}
+fastcrypto =  { git = "https://github.com/MystenLabs/fastcrypto", package = "fastcrypto"}
+shared-crypto={ git = "https://github.com/MystenLabs/sui/", package = "shared-crypto"}
+sui-config={ git = "https://github.com/MystenLabs/sui/", package = "sui-config"}
+sui-json-rpc-types={ git = "https://github.com/MystenLabs/sui/", package = "sui-json-rpc-types"}
+move-core-types={ git = "https://github.com/MystenLabs/sui/", package = "move-core-types"}
+tokio = { version = "1.2", features = ["full"] }
+anyhow = "1.0"
+hex = "0.4.3"  # Replace with the desired version
+blake2-rfc = "0.2"
+serde_json = "1.0"
+termcolor = "1.1.2"
+once_cell = "1.10.0"
+async-recursion = "=1.1.1"
+
+
+[profile.release]
+lto = true
+codegen-units = 1
+panic = 'abort'
+
+[build]
+rustflags = ["-C", "target-feature=+crt-static"]
